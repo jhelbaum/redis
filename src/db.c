@@ -69,7 +69,7 @@ void updateLFU(robj *val) {
  *  LOOKUP_NONE (or zero): No special flags are passed.
  *  LOOKUP_NOTOUCH: Don't alter the last access time of the key.
  *  LOOKUP_NONOTIFY: Don't trigger keyspace event on key miss.
- *  LOOKUP_NOSTATS: Don't increment key hits/misses couters.
+ *  LOOKUP_NOSTATS: Don't increment key hits/misses counters.
  *  LOOKUP_WRITE: Prepare the key for writing (delete expired keys even on
  *                replicas, use separate keyspace stats and events (TODO)).
  *
@@ -461,7 +461,7 @@ long long emptyData(int dbnum, int flags, void(callback)(dict*)) {
 
     if (with_functions) {
         serverAssert(dbnum == -1);
-        functionsCtxClearCurrent(async);
+        functionsLibCtxClearCurrent(async);
     }
 
     /* Also fire the end event. Note that this event will fire almost
@@ -1559,7 +1559,7 @@ int keyIsExpired(redisDb *db, robj *key) {
      * script execution, making propagation to slaves / AOF consistent.
      * See issue #1525 on Github for more information. */
     if (server.script_caller) {
-        now = evalTimeSnapshot();
+        now = scriptTimeSnapshot();
     }
     /* If we are in the middle of a command execution, we still want to use
      * a reference time that does not change: in that case we just use the
